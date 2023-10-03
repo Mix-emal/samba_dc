@@ -1,0 +1,12 @@
+---
+ansible_user: admin
+ansible_ssh_pass: '!QAZxsw2'
+ansible_become_pass: '!QAZxsw2'
+base_packets:
+  - bash-completion
+  - cloud-init
+services:
+  - pkg: firewalld
+    name: firewalld
+  - pkg: qemu-guest-agent
+    name: qemu-guest-agent

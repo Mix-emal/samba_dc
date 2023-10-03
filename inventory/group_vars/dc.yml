@@ -1,0 +1,6 @@
+---
+ports:
+  - 3306
+database:
+  pkg: mariadb-server
+  service: mariadb
