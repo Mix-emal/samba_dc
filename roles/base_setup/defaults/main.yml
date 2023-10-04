@@ -1,3 +1,4 @@
 ---
+# defaults file for base_setup
 create_user: true
 rename_server: true

@@ -1,0 +1,12 @@
+---
+# Пароль задается в зашифрованном виде, например его можно получить командой
+# ansible all -i localhost, -m debug -a 'msg={{ "!QAZxsw2" | password_hash("sha512","mysecretsalt") }}'
+- name: "Создане пользователя и добавление в группу wheel"
+  ansible.builtin.user:
+    name: admin
+    shell: /bin/bash
+    groups:
+      - wheel
+    append: true
+    password: "$6$mysecretsalt$pLZBao7G1ITmFhJpudJnrFLxt6Vw/NTCA5adf06dxhV7ut/g2DIiVHwgoJAyLBf7Ur8HmGvXM09dr0T4pP2.w/"
+    update_password: always

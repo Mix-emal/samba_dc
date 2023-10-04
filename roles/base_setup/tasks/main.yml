@@ -1,0 +1,8 @@
+---
+- name: Создание пользователя
+  ansible.builtin.include_tasks: "adduser.yaml"
+  when: create_user
+
+- name: Переименование сервера из inventory
+  ansible.builtin.include_tasks: "servername.yml"
+  when: rename_server
