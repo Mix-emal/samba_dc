@@ -1,0 +1,13 @@
+---
+- name: Блок установки {{ service.pkg_name }}
+  when: (service.pkg_name not in ansible_facts.packages)
+  block:
+    - name: "Установка {{ service.pkg_name }}"
+      ansible.builtin.dnf:
+        name: "{{ service.pkg_name }}"
+        state: present
+    - name: "Запуск {{ service.service_name }}"
+      ansible.builtin.service:
+        name: "{{ service.service_name }}"
+        state: started
+        enabled: true

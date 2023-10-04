@@ -1,0 +1,12 @@
+- name: Обновление DNS сервевера
+  block:
+    - name: Изменения DNS
+      community.general.nmcli:
+        ifname: "{{ ansible_default_ipv4.interface }}"
+        conn_name: "{{ ansible_default_ipv4.alias }}"
+        type: ethernet
+        dns4: "{{ dns_external }}"
+        state: present
+      notify: networkmanager
+    - name: Применение handlers
+      ansible.builtin.meta: flush_handlers

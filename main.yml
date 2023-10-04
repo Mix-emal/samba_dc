@@ -1,0 +1,7 @@
+---
+- name: Предварительная подготовка серверов
+  become: true
+  hosts: all
+  roles:
+    - role: preconfig
+      tags: preconfig

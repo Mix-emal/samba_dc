@@ -1,0 +1,19 @@
+- name: Установка chrony
+  ansible.builtin.dnf:
+    name: chrony
+    state: present
+    update_cache: true
+
+- name: Подготовка конфигурации chrony
+  ansible.builtin.template:
+    src: chrony.conf.j2
+    dest: /etc/chrony.conf
+    owner: root
+    group: root
+    mode: "0644"
+    backup: true
+
+- name: Restart chronyd
+  ansible.builtin.service:
+    name: chronyd
+    state: restarted

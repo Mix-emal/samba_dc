@@ -2,12 +2,29 @@
 ansible_user: admin
 ansible_ssh_pass: '!QAZxsw2'
 ansible_become_pass: '!QAZxsw2'
-base_packets:
-  - bash-completion
-services:
-  - pkg: firewalld
-    name: firewalld
-  - pkg: qemu-guest-agent
-    name: qemu-guest-agent
 
+# ## Список пакетов, если необходимо установить на все серверы
+# base_packets:
+#   - bash-completion
+
+# ## Список служб, которые необходимо установить на все серверы и запустить
+# services:
+#   - pkg_name: firewalld
+#     service_name: firewalld
+#   - pkg_name: qemu-guest-agent
+#     service_name: qemu-guest-agent
+
+## Изменения адреса в репозитории для всех серверов
+repo_url: "https://repo1.red-soft.ru/redos/7.3/"
+
+## Адрес внешнего DNS
+dns_external:
+  - 192.168.100.1
+  - 192.168.100.2
+
+## Основные параметры домена
 realm: adb.gazprom.ru
+
+## Адреса внешних NTP адресов
+chrony_servers:
+  - 192.168.100.1

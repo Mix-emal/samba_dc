@@ -1,0 +1,9 @@
+galaxy_info:
+  author: Evgeniy Malanyuk
+  description: Предварительный конфиг сереверов - \
+   установка репозиториев, selinux в permissive, обновление системы, общие пакеты и службы, настройка chrony
+  company: Croc Inc.
+  license: GPLv2
+  min_ansible_version: '2.9'
+  galaxy_tags: []
+dependencies: []

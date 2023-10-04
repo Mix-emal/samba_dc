@@ -1,3 +1,17 @@
 ---
+## Для роли base_setup, если необходимо создать пользователя
 create_user: true
 rename_server: true
+
+## Список пакетов, которые необходимо установить на DC
+base_packets:
+  - samba*
+  - krb5*
+  - bind
+
+## Список служб, которые необходимо установить на DC и запустить
+services:
+  - pkg_name: firewalld
+    service_name: firewalld
+  - pkg_name: qemu-guest-agent
+    service_name: qemu-guest-agent

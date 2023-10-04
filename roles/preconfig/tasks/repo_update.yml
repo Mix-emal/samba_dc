@@ -1,0 +1,32 @@
+- name: Репозитрий base
+  community.general.ini_file:
+    path: /etc/yum.repos.d/RedOS-Base.repo
+    section: base
+    option: baseurl
+    value: "{{ repo_url }}$basearch/os"
+    no_extra_spaces: true
+    mode: '0644'
+    state: present
+    exclusive: true
+
+- name: Репозитрий kernels6
+  community.general.ini_file:
+    path: /etc/yum.repos.d/RedOS-kernels6.repo
+    section: kernels6
+    option: baseurl
+    value: "{{ repo_url }}$basearch/extras/kernels6-73"
+    no_extra_spaces: true
+    mode: '0644'
+    state: present
+    exclusive: true
+
+- name: Репозитрий updates
+  community.general.ini_file:
+    path: /etc/yum.repos.d/RedOS-Updates.repo
+    section: updates
+    option: baseurl
+    value: "{{ repo_url }}$basearch/updates"
+    no_extra_spaces: true
+    mode: '0644'
+    state: present
+    exclusive: true

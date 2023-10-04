@@ -1,0 +1,50 @@
+---
+- name: Обновление DNS сервевера
+  when: dns_external is defined
+  ansible.builtin.include_tasks: "dns_update.yml"
+
+- name: Обновление URL репозиториев
+  when: repo_url is defined
+  ansible.builtin.include_tasks: "repo_update.yml"
+
+- name: Обновление системы
+  ansible.builtin.dnf:
+    name: "*"
+    state: latest
+    update_only: true
+
+- name: Список пакетов
+  ansible.builtin.package_facts:
+
+- name: Основные пакеты
+  when: base_packets is defined
+  block:
+    - name: Установка основных пакетов
+      ansible.builtin.dnf:
+        name: "{{ pkgt }}"
+        state: present
+      loop: "{{ base_packets }}"
+      loop_control:
+        loop_var: pkgt
+      when: pkgt not in ansible_facts.packages
+
+- name: Установка служб
+  when: service is defined
+  ansible.builtin.include_tasks: service.yml
+  loop: "{{ services }}"
+  loop_control:
+    loop_var: service
+
+- name: Настройка chrony
+  when: chrony_servers is defined
+  ansible.builtin.include_tasks: chrony.yml
+
+- name: Переключение selinux в permissive mod
+  ansible.posix.selinux:
+    policy: targeted
+    state: permissive
+  register: result
+
+- name: Перезагрузка сервера при необходимости
+  ansible.builtin.reboot:
+  when: result.reboot_required
