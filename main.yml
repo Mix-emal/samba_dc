@@ -5,3 +5,12 @@
   roles:
     - role: preconfig
       tags: preconfig
+
+- name: Первичный DC
+  become: true
+  hosts: primary_dc
+  roles:
+    - role: dns
+      tags: dns
+    - role: primary_dc
+      tags: install_dc

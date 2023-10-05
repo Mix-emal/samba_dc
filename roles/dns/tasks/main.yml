@@ -1,2 +1,6 @@
 ---
-# tasks file for dns
+- name: Подготовка конфигурации DNS сервера BIND
+  ansible.builtin.template:
+    src: named.conf.j2
+    dest: /etc/named.conf
+    mode: '0644'
