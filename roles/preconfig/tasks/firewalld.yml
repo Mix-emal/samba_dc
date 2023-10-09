@@ -1,0 +1,8 @@
+---
+- name: "Добавление разрешений"
+  ansible.posix.firewalld:
+    port: "{{ item }}"
+    permanent: true
+    state: enabled
+    immediate: true
+  loop: "{{ ports }}"

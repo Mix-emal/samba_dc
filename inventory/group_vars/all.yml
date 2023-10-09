@@ -22,8 +22,15 @@ dns_external:
   - 192.168.100.1
   - 192.168.100.2
 
+## Адрес внутреннего DNS (адрема контроллеров)
+dns_internal:
+  - 192.168.100.151
+  - 192.168.100.152
+
+
 ## Основные параметры домена
 realm: adb.gazprom.ru
+administrator_domain_password: '!QAZxsw2'
 
 ## Адреса внешних NTP адресов
 chrony_servers:

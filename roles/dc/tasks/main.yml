@@ -1,0 +1,88 @@
+---
+- name: Проверка, что сервер еще не DC
+  ansible.builtin.command: "samba-tool domain info {{ ansible_default_ipv4.address }}"
+  register: smb_dc_result
+  ignore_errors: true
+  changed_when: smb_dc_result.rc != 0
+
+- name: Блок конфигурирования Samba DC
+  when: smb_dc_result.failed
+  block:
+    - name: Проверка, что дефолтный файл smb.conf существует
+      ansible.builtin.stat:
+        path: "/etc/samba/smb.conf"
+      register: result
+
+    - name: Создаем копию конфигурации samba, если smb.conf существует
+      when: result.stat.exists
+      ansible.builtin.command: "mv /etc/samba/smb.conf /etc/samba/smb.conf.bak"
+      register: smb_conf_result
+      changed_when: smb_conf_result.rc != 0
+
+    - name: Очищаем базы и конфигурацию Samba (если уже создавался домен)
+      ansible.builtin.file:
+        state: absent
+        path: "{{ item }}"
+      loop:
+        - /var/lib/samba
+        - /var/cache/samba
+        - /etc/samba/smb.conf
+
+    - name: Создание основной директории /samba/sysvol
+      ansible.builtin.file:
+        path: /var/lib/samba/sysvol
+        state: directory
+        mode: '0755'
+
+    - name: Копирование файла crypto-policies
+      ansible.builtin.copy:
+        src: crypto-policies
+        dest: /etc/krb5.conf.d/crypto-policies
+        mode: '0644'
+        follow: true
+
+    - name: Обновление DNS сервера {{ inventory_hostname }}
+      ansible.builtin.include_tasks: "dns_update.yml"
+
+    - name: Создание домена
+      ansible.builtin.include_tasks: "primary_dc.yml"
+      when: inventory_hostname in groups["primary_dc"]
+
+    - name: Присоединение сервера в качестве вторичного контроллера домена
+      ansible.builtin.include_tasks: "replica_dc.yml"
+      when: inventory_hostname in groups["replica_dc"]
+
+    - name: Резервная копия /etc/krb5.conf
+      ansible.builtin.copy:
+        src: /etc/krb5.conf
+        dest: /etc/krb5.conf.bak
+        mode: '0644'
+        remote_src: true
+
+    - name: Подготовка конфигурации Kerberos и Samba
+      ansible.builtin.template:
+        src: "{{ item.templete_name }}"
+        dest: "{{ item.file_path }}"
+        owner: root
+        group: named
+        mode: "0644"
+        backup: true
+      loop:
+        - { templete_name: 'krb5.conf.j2', file_path: '/etc/krb5.conf' }
+        - { templete_name: 'smb.conf.j2', file_path: '/etc/samba/smb.conf' }
+
+    - name: Изменяем адрес в переменной dns_internal на адрес локального DNS
+      ansible.builtin.set_fact:
+        dns_internal: "{{ ansible_default_ipv4.address }}"
+
+    - name: Обновление DNS сервера {{ inventory_hostname }}
+      ansible.builtin.include_tasks: "dns_update.yml"
+
+    - name: Запуск сервисов Samba и named
+      ansible.builtin.service:
+        name: "{{ item }}"
+        state: started
+        enabled: true
+      loop:
+        - samba
+        - named

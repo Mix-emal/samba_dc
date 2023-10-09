@@ -1,7 +1,8 @@
 ---
 - name: Предварительная подготовка серверов
   become: true
-  hosts: all
+  # hosts: all
+  hosts: primary_dc
   roles:
     - role: preconfig
       tags: preconfig
@@ -12,5 +13,14 @@
   roles:
     - role: dns
       tags: dns
-    - role: primary_dc
+    - role: dc
+      tags: install_dc
+
+- name: Резервный DC
+  become: true
+  hosts: replica_dc
+  roles:
+    - role: dns
+      tags: dns
+    - role: dc
       tags: install_dc

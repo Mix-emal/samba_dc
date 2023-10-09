@@ -1,6 +1,6 @@
 galaxy_info:
   author: Evgeniy Malanyuk
-  description: Роль для разворачивания первого кнтроллера домена
+  description: Роль для разворачивания контроллеров домена
   company: Croc Inc.
   license: GPLv2
   min_ansible_version: '2.9'

@@ -1,0 +1,10 @@
+---
+- name: Присоединение сервера в качестве вторичного контроллера домена
+  ansible.builtin.command: >
+    samba-tool domain join {{ ansible_domain | upper }} DC
+    --dns-backend=BIND9_DLZ
+    --realm={{ ansible_domain | upper }}
+    --username Administrator
+    --password {{ administrator_domain_password | quote }}
+  register: dc_result
+  changed_when: dc_result.rc != 0

@@ -1,0 +1,9 @@
+---
+- name: Создание первичного домена
+  ansible.builtin.command: >
+    samba-tool domain provision --use-rfc2307
+    --realm {{ ansible_domain | upper }}
+    --domain {{ ansible_domain.split('.', 1)[0] | upper }}
+    --server-role dc --dns-backend BIND9_DLZ --adminpass {{ administrator_domain_password | quote }}
+  register: dc_result
+  changed_when: dc_result.rc != 0
