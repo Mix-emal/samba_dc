@@ -13,6 +13,16 @@
     state: latest
     update_only: true
 
+- name: Переключение selinux в permissive mod
+  ansible.posix.selinux:
+    policy: targeted
+    state: permissive
+  register: result
+
+- name: Перезагрузка сервера при необходимости
+  ansible.builtin.reboot:
+  when: result.reboot_required
+
 - name: Список пакетов
   ansible.builtin.package_facts:
 
@@ -38,6 +48,10 @@
 - name: Настройка chrony
   when: chrony_servers is defined
   ansible.builtin.include_tasks: chrony.yml
+
+- name: Настройка firewalld
+  when: ports is defined
+  ansible.builtin.include_tasks: "firewalld.yml"
 
 - name: Переключение selinux в permissive mod
   ansible.posix.selinux:

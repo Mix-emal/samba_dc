@@ -1,4 +1,4 @@
 ---
 # defaults file for base_setup
-base_setup_create_user: false
-base_setup_rename_server: false
+create_user: false
+rename_server: false

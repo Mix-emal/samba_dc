@@ -1,8 +1,16 @@
----
+# ---
+# - name: Предварительная подготовка серверов
+#   become: true
+#   hosts: all
+#   # hosts: primary_dc
+#   roles:
+#     - role: preconfig
+#       tags: preconfig
+
 - name: Предварительная подготовка серверов
   become: true
-  # hosts: all
-  hosts: primary_dc
+  hosts: smb
+  # hosts: primary_dc
   roles:
     - role: preconfig
       tags: preconfig
@@ -14,7 +22,9 @@
     - role: dns
       tags: dns
     - role: dc
-      tags: install_dc
+      tags:
+        - install_dc
+        - "[never, reinstall_dc]"
 
 - name: Резервный DC
   become: true
@@ -23,4 +33,6 @@
     - role: dns
       tags: dns
     - role: dc
-      tags: install_dc
+      tags:
+        - install_dc
+        - "[never, reinstall_dc]"

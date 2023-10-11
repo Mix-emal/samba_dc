@@ -6,8 +6,18 @@
   changed_when: smb_dc_result.rc != 0
 
 - name: Блок конфигурирования Samba DC
-  when: smb_dc_result.failed
+  when: smb_dc_result.failed | default('true')
+  tags:
+    - reinstall_dc
   block:
+    - name: Останавливаем сервис Samba и named в случае переустановки
+      ansible.builtin.service:
+        name: "{{ item }}"
+        state: stopped
+      loop:
+        - samba
+        - named
+      # tags: [never, reinstall_dc]
     - name: Проверка, что дефолтный файл smb.conf существует
       ansible.builtin.stat:
         path: "/etc/samba/smb.conf"

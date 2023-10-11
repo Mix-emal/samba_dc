@@ -59,9 +59,21 @@ logging {
         };
 };
 
+{% if bind_zones is defined %}
+{% for bind_zone in bind_zones %}
+{% if bind_zone.type is defined and bind_zone.type == 'forward' %}
+zone "{{ bind_zone.name }}" IN {
+   type forward;
+   forward only;
+   forwarders { {{ bind_zone.forwarders|join('; ') }}; };
+};
+{% endif %}
+{% endfor %}
+{% endif %}
+
 zone "." IN {
-        type hint;
-        file "named.ca";
+   type hint;
+   file "named.ca";
 };
 
 include "/etc/named.rfc1912.zones";

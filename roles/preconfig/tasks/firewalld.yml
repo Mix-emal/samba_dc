@@ -1,4 +1,13 @@
 ---
+# Какой то баг ОС RedOS, для решения нужно перезапустить службы dbus и firewalld
+- name: Перезапуск dbus и firewalld
+  ansible.builtin.service:
+    name: "{{ item }}"
+    state: restarted
+  loop:
+    - dbus
+    - firewalld
+
 - name: "Добавление разрешений"
   ansible.posix.firewalld:
     port: "{{ item }}"
