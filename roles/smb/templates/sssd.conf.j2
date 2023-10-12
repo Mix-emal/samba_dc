@@ -1,0 +1,66 @@
+[sssd]
+domains = adb.gazprom.ru
+config_file_version = 2
+services = nss, pam
+
+# Фильтр re_expression пропускает login доменного пользователя, только в нижнем регистре символов.
+# Используется совместно со значением case_sensitive = False
+# re_expression = (?P<name>[a-z0-9_-\.]+)
+
+[domain/adb.gazprom.ru]
+ad_domain = adb.gazprom.ru
+ad_server = dc-100.adb.gazprom.ru, dc-101.adb.gazprom.ru, _srv_
+krb5_realm = ADB.GAZPROM.RU
+case_sensitive = False
+realmd_tags = manages-system joined-with-samba
+
+# Кэширование аутентификационных данных, необходимо при недоступности домена
+cache_credentials = True
+id_provider = ad
+access_provider = ad
+krb5_store_password_if_offline = True
+default_shell = /bin/bash
+ldap_id_mapping = True
+ad_gpo_access_control = disabled
+dns_resolver_timeout = 10
+
+# Включает/Отключает режим полных имён пользователей при входе
+use_fully_qualified_names = False
+
+# Определение домашнего каталога для доменных пользователей
+fallback_homedir = /home/%u@%d
+
+# Параметр access_provider = simple Определяет список доступа на основе имен пользователей или групп.
+#access_provider = simple
+#simple_allow_users = user1@example.com, user2@example.com
+#simple_allow_groups = group@example.com
+
+# Включает/Отключает перечисление всех записей домена, операция(id или getent) может занимать длительное время при enumerate = true в больших инфраструктурах
+enumerate = false
+
+# Параметр ignore_group_members может ускорить авторизацию в домене если домен имеет большое количество пользователей, групп и вложенных OU
+# Если установлено значение TRUE, то атрибут членства в группе не запрашивается с сервера ldap и не обрабатывается вызовов поиска группы.
+# ignore_group_members = True
+
+# Поиск ссылок может привести к снижению производительности в средах, которые их интенсивно используют.
+# true - не рекомендуется для больших инфраструктур. Отключаем этот поиск.
+ldap_referrals = false
+
+# Включает/Отключает динамические обновления DNS, если в статусе sssd ошибка "TSIG error with server: tsig verify failure", то установите dyndns_update = false
+dyndns_update = true
+dyndns_refresh_interval = 43200
+dyndns_update_ptr = true
+dyndns_ttl = 3600
+
+krb5_lifetime = 24h # Срок действия билета истекает каждые 24ч и его можно непрерывно продлевать в течение 7 дней
+krb5_renewable_lifetime = 7d # Самопродление тикета, значение определяет максимальное время жизни тикета
+krb5_renew_interval = 60s # Определяет интервал необходимость обновления билета. По истечении половины срока действия билета билет продлевается автоматически.
+
+[domain/dom4.int/win.nornik.ru]
+use_fully_qualified_names = True
+
+[nss]
+# Сколько секунд nss_sss должен кэшировать перечисления (запросы информации обо всех пользователях) Default: 120
+#entry_cache_timeout = 15
+# Задает время в секундах, в течение которого список поддоменов будет считаться действительным. Default: 60
+#get_domains_timeout = 10

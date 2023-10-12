@@ -1,0 +1,45 @@
+[global]
+    workgroup = ADB
+    realm = ADB.GAZPROM.RU
+    security = ADS
+    passdb backend = tdbsam
+
+    #winbind enum groups = Yes
+    #winbind enum users = Yes
+    #winbind offline logon = Yes
+    #winbind use default domain = No
+    #winbind refresh tickets = Yes
+    winbind refresh tickets = Yes
+
+    #idmap cache time = 900
+    idmap config * : backend = tdb
+    idmap config * : range = 210000-999999
+    idmap config ADB : backend = sss
+    idmap config ADB : range = 2000000-4000000000
+
+    #client min protocol = NT1
+    client min protocol = SMB3
+
+    dedicated keytab file = /etc/krb5.keytab
+    kerberos method = secrets and keytab
+
+    machine password timeout = 60
+    vfs objects = acl_xattr
+    map acl inherit = yes
+    store dos attributes = yes
+
+    #printing = cups
+    #printcap name = cups
+    printcap name = /dev/null
+    #load printers = yes
+    load printers = no
+    #cups options = raw
+
+[share]
+ path = /exports/pub
+ read only = no
+ browseable = yes
+ valid users = "@ADB\Domain Users"
+ admin users = "@ADB\Domain Admins","@WIN\Domain Admins"
+ directory mask = 0700
+ create mask = 0600

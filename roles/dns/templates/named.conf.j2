@@ -23,8 +23,8 @@ options {
 {% endfor %}
         };
                         
-        allow-query { localnets; {{ samba_network }}; };
-        allow-recursion { localnets; {{ samba_network }}; };
+        allow-query { localnets; {{ site_network }}; };
+        allow-recursion { localnets; {{ site_network }}; };
         /*
          - If you are building an AUTHORITATIVE DNS server, do NOT enable recursion.
          - If you are building a RECURSIVE (caching) DNS server, you need to enable

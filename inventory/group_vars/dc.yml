@@ -1,7 +1,7 @@
 ---
 ## Для роли base_setup, если необходимо создать пользователя
-create_user: true
-rename_server: true
+base_setup_create_user: true
+base_setup_rename_server: true
 
 ## Список пакетов, которые необходимо установить на DC
 base_packets:

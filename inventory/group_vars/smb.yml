@@ -1,11 +1,23 @@
 ---
 ## Для роли base_setup, если необходимо создать пользователя
-create_user: true
-rename_server: true
+base_setup_create_user: true
+base_setup_rename_server: true
 
 ## Список пакетов, которые необходимо установить на DHCP
 base_packets:
   - bash-completion
+  - samba*.x86_64
+  - join-to-domain
+  - realmd
+  - oddjob-mkhomedir
+  - oddjob
+  - samba-winbind-clients
+  - samba-winbind
+  - samba-common-tools
+  - sssd-winbind-idmap
+  - krb5-workstation*.x86_64
+  - adcli
+
 
 ## Список служб, которые необходимо установить на DHCP
 services:
