@@ -18,7 +18,8 @@
     idmap config ADB : range = 2000000-4000000000
 
     #client min protocol = NT1
-    client min protocol = SMB3
+    client min protocol = SMB2
+    client max protocol = SMB3
 
     dedicated keytab file = /etc/krb5.keytab
     kerberos method = secrets and keytab
