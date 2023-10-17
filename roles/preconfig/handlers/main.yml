@@ -3,4 +3,8 @@
   ansible.builtin.service:
     name: NetworkManager
     state: restarted
+  retries: 3
+  delay: 3
+  register: result
+  until: not result.failed
   listen: networkmanager

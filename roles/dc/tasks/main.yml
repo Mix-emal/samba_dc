@@ -74,19 +74,12 @@
         src: "{{ item.templete_name }}"
         dest: "{{ item.file_path }}"
         owner: root
-        group: named
+        group: "{{ file_group }}"
         mode: "0644"
         backup: true
       loop:
-        - { templete_name: 'krb5.conf.j2', file_path: '/etc/krb5.conf' }
-        - { templete_name: 'smb.conf.j2', file_path: '/etc/samba/smb.conf' }
-
-    - name: Изменяем адрес в переменной dns_internal на адрес локального DNS
-      ansible.builtin.set_fact:
-        dns_internal: "{{ ansible_default_ipv4.address }}"
-
-    - name: Обновление DNS сервера {{ inventory_hostname }}
-      ansible.builtin.include_tasks: "dns_update.yml"
+        - { templete_name: 'krb5.conf.j2', file_path: '/etc/krb5.conf', file_group: 'named' }
+        - { templete_name: 'smb.conf.j2', file_path: '/etc/samba/smb.conf', file_group: 'root' }
 
     - name: Запуск сервисов Samba и named
       ansible.builtin.service:
@@ -96,3 +89,10 @@
       loop:
         - samba
         - named
+
+- name: Изменение адреса в переменной dns_internal на адрес локального DNS
+  ansible.builtin.set_fact:
+    dns_internal: "{{ ansible_default_ipv4.address }}"
+
+- name: Обновление DNS сервера {{ inventory_hostname }}
+  ansible.builtin.include_tasks: "dns_update.yml"

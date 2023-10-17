@@ -3,7 +3,7 @@
 base_setup_create_user: true
 base_setup_rename_server: true
 
-## Список пакетов, которые необходимо установить на DHCP
+## Список пакетов, которые необходимо установить на файловый сервер
 base_packets:
   - bash-completion
   - samba*.x86_64
@@ -18,8 +18,7 @@ base_packets:
   - krb5-workstation*.x86_64
   - adcli
 
-
-## Список служб, которые необходимо установить на DHCP
+## Список служб, которые необходимо установить на файловый сервер
 services:
   - pkg_name: firewalld
     service_name: firewalld
@@ -28,3 +27,6 @@ services:
 ports:
   - 161/udp
   - 445/tcp
+
+## Каталог для общего доступа
+share_dir: /exports/pub

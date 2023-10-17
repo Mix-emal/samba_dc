@@ -3,6 +3,22 @@
   when: dns_external is defined
   ansible.builtin.include_tasks: "dns_update.yml"
 
+- name: Отключение IPv6
+  community.general.nmcli:
+    type: ethernet
+    ifname: "{{ ansible_default_ipv4.interface }}"
+    conn_name: "{{ ansible_default_ipv4.alias }}"
+    method6: disabled
+    state: present
+  notify: networkmanager
+# - name: Применение handlers
+#   ansible.builtin.meta: flush_handlers
+
+- name: Добавдение IP адреса сервера в /etc/hosts
+  ansible.builtin.lineinfile:
+    path: /etc/hosts
+    line: "{{ ansible_default_ipv4.address }}  {{ ansible_fqdn }} {{ ansible_hostname }}"
+
 - name: Обновление URL репозиториев
   when: repo_url is defined
   ansible.builtin.include_tasks: "repo_update.yml"
@@ -12,16 +28,6 @@
     name: "*"
     state: latest
     update_only: true
-
-- name: Переключение selinux в permissive mod
-  ansible.posix.selinux:
-    policy: targeted
-    state: permissive
-  register: result
-
-- name: Перезагрузка сервера при необходимости
-  ansible.builtin.reboot:
-  when: result.reboot_required
 
 - name: Список пакетов
   ansible.builtin.package_facts:

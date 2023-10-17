@@ -1,2 +1,26 @@
 ---
-# tasks file for smb
+- name: Ввод сервера в домен
+  ansible.builtin.command: >
+    realm join
+    --membership-software=samba
+    --client-software=winbind {{ ansible_domain | upper }}
+  register: dc_result
+  changed_when: dc_result.rc != 0
+
+- name: Подкготовка конфигурации sssd.conf и smb.conf
+  ansible.builtin.template:
+    src: "{{ item.templete_name }}"
+    dest: "{{ item.file_path }}"
+    owner: root
+    group: root
+    mode: "0644"
+    backup: true
+  loop:
+    - { templete_name: 'sssd.conf.j2', file_path: '/etc/sssd/sssd.conf', file_permissions: '0600'}
+    - { templete_name: 'smb.conf.j2', file_path: '/etc/samba/smb.conf', file_permissions: '0644' }
+
+- name: Создание каталога для общего доступа
+  ansible.builtin.file:
+    path: "{{ share_dir }}"
+    state: directory
+    mode: '0755'

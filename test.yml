@@ -1,9 +1,10 @@
 ---
 - name: Test
-  hosts: dc
+  hosts: aus177
+  become: true
 
   tasks:
     - name: Replica_dc
       ansible.builtin.debug:
-        msg: "{{ groups }}"
-      when: inventory_hostname in groups["replica_dc"]
+        msg: "{{ ansible_enp1s0 }}"
+      # when: inventory_hostname in groups["replica_dc"]

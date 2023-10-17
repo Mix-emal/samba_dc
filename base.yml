@@ -6,6 +6,6 @@
 - name: Добавление пользвателя и переименование сервера из файла inventory
   become: true
   become_user: root
-  hosts: smb
+  hosts: aus177
   roles:
     - base_setup
