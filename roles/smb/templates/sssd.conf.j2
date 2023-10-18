@@ -1,5 +1,5 @@
 [sssd]
-domains = adb.gazprom.ru
+domains = {{ realm }}
 config_file_version = 2
 services = nss, pam
 
@@ -7,10 +7,18 @@ services = nss, pam
 # Используется совместно со значением case_sensitive = False
 # re_expression = (?P<name>[a-z0-9_-\.]+)
 
-[domain/adb.gazprom.ru]
-ad_domain = adb.gazprom.ru
-ad_server = dc-100.adb.gazprom.ru, dc-101.adb.gazprom.ru, _srv_
-krb5_realm = ADB.GAZPROM.RU
+[domain/{{ realm }}]
+ad_domain = {{ realm }}
+{# Блок строит строку ad_server  в зависимости от сайта в котором устанавливается файл сервер
+   То есть есть если SiteA, то в строке контроллеры, которые обслуживают этот сайт 
+#}
+ad_server = {% for host in groups['dc'] %}
+{% for group in hostvars[host].group_names %}
+{% if group in group_names %}{{ hostvars[host].inventory_hostname }}.{{ realm }}, {% endif %}
+{% endfor %}
+{% endfor %}_srv_
+{# #}
+krb5_realm = {{ realm | upper }}
 case_sensitive = False
 realmd_tags = manages-system joined-with-samba
 
@@ -56,7 +64,7 @@ krb5_lifetime = 24h # Срок действия билета истекает к
 krb5_renewable_lifetime = 7d # Самопродление тикета, значение определяет максимальное время жизни тикета
 krb5_renew_interval = 60s # Определяет интервал необходимость обновления билета. По истечении половины срока действия билета билет продлевается автоматически.
 
-[domain/adb.gazprom.ru/win.nornik.ru]
+[domain/{{ realm }}/{{ trust_realm }}]
 use_fully_qualified_names = True
 
 [nss]

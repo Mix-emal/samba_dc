@@ -1,7 +1,6 @@
----
 galaxy_info:
   author: Evgeniy Malanyuk
-  description: Роль для обновления dns кофигурации на серверах
+  description: Роль для разворачивания и конфигурирования DNS сервера (bind)
   company: Croc Inc.
   license: GPLv2
   min_ansible_version: '2.9'

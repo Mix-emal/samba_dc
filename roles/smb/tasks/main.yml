@@ -1,11 +1,44 @@
 ---
+- name: Установка доменного DNS для сервера {{ inventory_hostname }}
+  ansible.builtin.include_role:
+    name: dns
+  vars:
+    dns_servers: "{{ dns_internal }}"
+
+- name: Check if system is already domain joined
+  ansible.builtin.command: >
+    adcli testjoin
+  ignore_errors: true
+  register: domain_joined
+  changed_when: domain_joined.rc != 0
+
 - name: Ввод сервера в домен
+  when: domain_joined.failed
   ansible.builtin.command: >
     realm join
     --membership-software=samba
-    --client-software=winbind {{ ansible_domain | upper }}
+    --client-software=winbind {{ realm | upper }}
   register: dc_result
   changed_when: dc_result.rc != 0
+
+- name: Создание каталога для общего доступа
+  ansible.builtin.file:
+    path: "{{ share.dir }}"
+    state: directory
+    owner: "{{ share.owner }}"
+    group: "{{ share.main_group }}"
+    mode: "{{ share.permissions }}"
+
+- name: Назначение ACL на каталог общего доступа
+  when: share.setfacl_group is defined
+  ansible.posix.acl:
+    path: "{{ share.dir }}"
+    etype: "group"
+    entity: "{{ item.name }}"
+    permissions: "{{ item.permissions }}"
+    default: true
+    state: present
+  loop: "{{ share.setfacl_group }}"
 
 - name: Подкготовка конфигурации sssd.conf и smb.conf
   ansible.builtin.template:
@@ -13,14 +46,20 @@
     dest: "{{ item.file_path }}"
     owner: root
     group: root
-    mode: "0644"
+    mode: "{{ item.file_permissions }}"
     backup: true
   loop:
     - { templete_name: 'sssd.conf.j2', file_path: '/etc/sssd/sssd.conf', file_permissions: '0600'}
     - { templete_name: 'smb.conf.j2', file_path: '/etc/samba/smb.conf', file_permissions: '0644' }
+  vars:
+    dc: "{{ groups['dc'] }}"
 
-- name: Создание каталога для общего доступа
-  ansible.builtin.file:
-    path: "{{ share_dir }}"
-    state: directory
-    mode: '0755'
+- name: Запуск сервисов Samba и named
+  ansible.builtin.service:
+    name: "{{ item }}"
+    state: restarted
+    enabled: true
+  loop:
+    - sssd
+    - winbind
+    - smb

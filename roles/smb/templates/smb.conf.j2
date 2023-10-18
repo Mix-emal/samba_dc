@@ -1,23 +1,15 @@
 [global]
-    workgroup = ADB
-    realm = ADB.GAZPROM.RU
+    workgroup = {{ realm.split('.', 1)[0] | upper }}
+    realm = {{ realm | upper }}
     security = ADS
     passdb backend = tdbsam
-
-    #winbind enum groups = Yes
-    #winbind enum users = Yes
-    #winbind offline logon = Yes
-    #winbind use default domain = No
-    #winbind refresh tickets = Yes
     winbind refresh tickets = Yes
 
-    #idmap cache time = 900
     idmap config * : backend = tdb
     idmap config * : range = 210000-999999
     idmap config ADB : backend = sss
     idmap config ADB : range = 2000000-4000000000
 
-    #client min protocol = NT1
     client min protocol = SMB2
     client max protocol = SMB3
 
@@ -29,18 +21,18 @@
     map acl inherit = yes
     store dos attributes = yes
 
-    #printing = cups
-    #printcap name = cups
     printcap name = /dev/null
-    #load printers = yes
     load printers = no
-    #cups options = raw
 
 [share]
- path = /exports/pub
+ path = {{ share.dir }}
  read only = no
  browseable = yes
- valid users = "@ADB\Domain Users"
- admin users = "@ADB\Domain Admins","@WIN\Domain Admins"
+{% if valid_users is defined %}
+ valid users = {{ valid_users | join(',') }}
+{% endif %}
+{% if admin_users is defined %}
+ admin users = {{ admin_users | join(',') }}
+{% endif %}
  directory mask = 0700
  create mask = 0600

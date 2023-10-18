@@ -51,8 +51,11 @@
         mode: '0644'
         follow: true
 
-    - name: Обновление DNS сервера {{ inventory_hostname }}
-      ansible.builtin.include_tasks: "dns_update.yml"
+    - name: Установка доменного DNS для сервера {{ inventory_hostname }}
+      ansible.builtin.include_role:
+        name: dns
+      vars:
+        dns_servers: "{{ dns_internal }}"
 
     - name: Создание домена
       ansible.builtin.include_tasks: "primary_dc.yml"
@@ -90,9 +93,8 @@
         - samba
         - named
 
-- name: Изменение адреса в переменной dns_internal на адрес локального DNS
-  ansible.builtin.set_fact:
-    dns_internal: "{{ ansible_default_ipv4.address }}"
-
-- name: Обновление DNS сервера {{ inventory_hostname }}
-  ansible.builtin.include_tasks: "dns_update.yml"
+- name: Установка локального DNS для сервера {{ inventory_hostname }}
+  ansible.builtin.include_role:
+    name: dns
+  vars:
+    dns_servers: "{{ ansible_default_ipv4.address }}"

@@ -1,6 +1,13 @@
 ---
-- name: Подготовка конфигурации DNS сервера BIND
-  ansible.builtin.template:
-    src: named.conf.j2
-    dest: /etc/named.conf
-    mode: '0644'
+- name: Обновление DNS сервевера
+  block:
+    - name: Изменение DNS в /etc/resolv.conf для сервера {{ inventory_hostname }}
+      community.general.nmcli:
+        ifname: "{{ ansible_default_ipv4.interface }}"
+        conn_name: "{{ ansible_default_ipv4.alias }}"
+        type: ethernet
+        dns4: "{{ dns_servers }}"
+        state: present
+      notify: networkmanager
+    - name: Применение handlers
+      ansible.builtin.meta: flush_handlers

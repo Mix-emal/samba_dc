@@ -28,5 +28,21 @@ ports:
   - 161/udp
   - 445/tcp
 
-## Каталог для общего доступа
-share_dir: /exports/pub
+## Каталог для общего доступа. Также описание разрашений для ACL
+share:
+  dir: /exports/pub
+  permissions: '2770'
+  owner: root
+  main_group: "{{ realm.split('.', 1)[0] | upper }}\\Domain Users"
+  setfacl_group:
+    - name: "{{ realm.split('.', 1)[0] | upper }}\\Domain Admins"
+      permissions: rwx
+    # - name: "{{ realm.split('.', 1)[0] | upper }}\\ServerAdmins"
+    #   permissions: rwx
+
+## Параметры каталога общего достпа (группы, кому доступен каталог и административные группы)
+valid_users:
+  - "@{{ realm.split('.', 1)[0] | upper }}\\Domain Users"
+admin_users:
+  - "@{{ realm.split('.', 1)[0] | upper }}\\Domain Admins"
+  - "@{{ trust_realm.split('.', 1)[0] | upper }}\\Domain Admins"

@@ -1,10 +1,12 @@
 ---
 - name: Test
-  hosts: aus177
+  hosts: aus128
+  gather_facts: false
   become: true
 
   tasks:
     - name: Replica_dc
       ansible.builtin.debug:
-        msg: "{{ ansible_enp1s0 }}"
+        var: groups['dc']
+      # loop: "{{ groups['dc'] }}"
       # when: inventory_hostname in groups["replica_dc"]

@@ -1,7 +1,7 @@
 ---
 # Добавиление зон (type - forward)
 bind_zones:
-  - name: "win.nornik.ru"
+  - name: "{{ trust_realm }}"
     type: forward
     forwarders:
       - 192.168.100.17

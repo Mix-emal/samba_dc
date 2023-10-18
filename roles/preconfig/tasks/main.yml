@@ -1,7 +1,10 @@
 ---
-- name: Обновление DNS сервевера
+- name: Установка в качестве DNS внешнего сервера
   when: dns_external is defined
-  ansible.builtin.include_tasks: "dns_update.yml"
+  ansible.builtin.include_role:
+    name: dns
+  vars:
+    dns_servers: "{{ dns_external }}"
 
 - name: Отключение IPv6
   community.general.nmcli:
