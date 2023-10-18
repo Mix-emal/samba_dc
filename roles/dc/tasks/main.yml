@@ -58,12 +58,12 @@
         dns_servers: "{{ dns_internal }}"
 
     - name: Создание домена
-      ansible.builtin.include_tasks: "primary_dc.yml"
       when: inventory_hostname in groups["primary_dc"]
+      ansible.builtin.include_tasks: "primary_dc.yml"
 
     - name: Присоединение сервера в качестве вторичного контроллера домена
-      ansible.builtin.include_tasks: "replica_dc.yml"
       when: inventory_hostname in groups["replica_dc"]
+      ansible.builtin.include_tasks: "replica_dc.yml"
 
     - name: Резервная копия /etc/krb5.conf
       ansible.builtin.copy:
@@ -92,6 +92,18 @@
       loop:
         - samba
         - named
+
+    - name: Бэкап SYSVOL на резервном сервере
+      when: inventory_hostname in groups["replica_dc"]
+      ansible.builtin.copy:
+        src: /var/lib/samba/sysvol
+        dest: /var/lib/samba/sysvol.bak
+        mode: '0770'
+        remote_src: true
+
+    - name: Настройка репликации SYSVOL
+      when: inventory_hostname in groups["primary_dc"]
+      ansible.builtin.include_tasks: "sysvol.yml"
 
 - name: Установка локального DNS для сервера {{ inventory_hostname }}
   ansible.builtin.include_role:

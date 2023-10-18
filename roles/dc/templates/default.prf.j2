@@ -1,0 +1,23 @@
+root = /var/lib/samba
+# Note that 2 x / behind DC2, it is required
+root = ssh://root@DC2.skynet.murom//var/lib/samba 
+{% for host in groups['replica_dc'] %}
+root = ssh://root@{{ hostvars[host].inventory_hostname }}.{{ realm }}//var/lib/samba 
+{% endfor %}
+# Путь синхронизации
+path = sysvol
+#ignore = Path stats  ## ignores /var/www/stats
+auto=true
+batch=true
+perms=0
+rsync=true
+maxthreads=1
+retry=3
+confirmbigdeletes=false
+servercmd=/usr/bin/unison
+copythreshold=0
+copyprog = /usr/bin/rsync -XAavz --rsh='ssh -p 22' --inplace --compress --old-args
+copyprogrest = /usr/bin/rsync -XAavz --rsh='ssh -p 22' --partial --inplace --compress --old-args
+copyquoterem = true
+copymax = 1
+logfile = /var/log/sysvol-sync.log

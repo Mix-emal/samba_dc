@@ -8,6 +8,8 @@ base_packets:
   - samba*
   - krb5*
   - bind
+  - rsync
+  - unison
 
 ## Список служб, которые необходимо установить на DC и запустить
 services:

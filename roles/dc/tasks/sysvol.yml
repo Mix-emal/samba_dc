@@ -1,0 +1,51 @@
+---
+- name: Создание директории с конфигурацией подключения по SSH
+  ansible.builtin.file:
+    path: /root/.ssh/ctl
+    state: directory
+    mode: '0755'
+
+- name: Копирование файла с конфигурацией подключения по SSH
+  ansible.builtin.copy:
+    src: config
+    dest: /root/.ssh/ctl/config
+    mode: '0644'
+
+- name: Создание файла для записи лога
+  ansible.builtin.file:
+    path: /var/log/sysvol-sync.log
+    owner: root
+    group: root
+    mode: '0640'
+    state: touch
+
+- name: Создание директории с конфигурацией unison
+  ansible.builtin.file:
+    path: /root/.unison
+    state: directory
+    mode: '0755'
+
+- name: Подкготовка конфигурации unison
+  ansible.builtin.template:
+    src: "default.prf.j2"
+    dest: /root/.unison/default.prf
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Первичная синхронизация
+# noqa command-instead-of-module
+  ansible.builtin.command: >
+    rsync -XAavz
+    --log-file /var/log/sysvol-sync.log
+    --delete-after -f"+ */" -f"- *" /var/lib/samba/sysvol root@{{ item }}:/var/lib/samba && /usr/bin/unison
+  register: dc_result
+  changed_when: dc_result.rc != 0
+  loop: "{{ groups['replica_dc'] }}"
+
+- name: Создания задания для Unison
+  ansible.builtin.cron:
+    name: unison
+    minute: "5"
+    job: "/usr/bin/unison -silent"
+    user: root

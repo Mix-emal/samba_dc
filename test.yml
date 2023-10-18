@@ -7,6 +7,6 @@
   tasks:
     - name: Replica_dc
       ansible.builtin.debug:
-        var: groups['dc']
+      var: groups['dc']
       # loop: "{{ groups['dc'] }}"
       # when: inventory_hostname in groups["replica_dc"]
