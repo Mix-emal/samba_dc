@@ -1,9 +1,9 @@
 ---
 - name: Test
-  hosts: dc
+  hosts: dc:&siteA
 
   tasks:
     - name: Replica_dc
       ansible.builtin.debug:
-        msg: "{{ groups }}"
-      when: inventory_hostname in groups["replica_dc"]
+        msg: "{{ ansible_default_ipv4.address }}  {{ ansible_fqdn }} {{ ansible_hostname }} находится в {{ site_network }}. Траст {{ bind_zones[0].name }}"
+      # when: inventory_hostname in groups["replica_dc"]

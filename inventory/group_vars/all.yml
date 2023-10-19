@@ -32,6 +32,8 @@ dns_internal:
 realm: adb.gazprom.ru
 administrator_domain_password: '!QAZxsw2'
 
+trust_realm: win.nornik.ru
+
 ## Адреса внешних NTP адресов
 chrony_servers:
   - 192.168.100.1
