@@ -5,7 +5,7 @@
   vars:
     dns_servers: "{{ dns_internal }}"
 
-- name: Check if system is already domain joined
+- name: Проверка, что сервер в домене или нет
   ansible.builtin.command: >
     adcli testjoin
   ignore_errors: true

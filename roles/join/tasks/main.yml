@@ -1,0 +1,31 @@
+---
+- name: Установка скрипта для ввода в домен
+  ansible.builtin.dnf:
+    name:
+      - join-to-domain.sh
+    update_cache: true
+    state: present
+
+- name: Установка доменного DNS для сервера {{ inventory_hostname }}
+  ansible.builtin.include_role:
+    name: dns
+  vars:
+    dns_servers: "{{ dns_internal }}"
+
+- name: Проверка, что сервер в домене или нет
+  ansible.builtin.command: >
+    adcli testjoin
+  ignore_errors: true
+  register: domain_joined
+  changed_when: domain_joined.rc != 0
+
+- name: Ввод сервера в домен
+  when: domain_joined.failed
+  ansible.builtin.command: >
+    
+    
+    realm join
+    --membership-software=samba
+    --client-software=winbind {{ realm | upper }}
+  register: dc_result
+  changed_when: dc_result.rc != 0
