@@ -1,12 +1,17 @@
 ---
 - name: Test
-  hosts: aus128
+  hosts: dc-100
   gather_facts: false
   become: true
 
   tasks:
+    - name: Set site
+      ansible.builtin.set_fact:
+        dbs: "{{ '--site=' + site_name if site_name is defined else '' }}"
+
+
     - name: Replica_dc
       ansible.builtin.debug:
-      var: groups['dc']
+        var: dbs
       # loop: "{{ groups['dc'] }}"
       # when: inventory_hostname in groups["replica_dc"]

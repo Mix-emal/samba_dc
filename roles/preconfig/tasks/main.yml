@@ -17,11 +17,6 @@
 # - name: Применение handlers
 #   ansible.builtin.meta: flush_handlers
 
-- name: Добавдение IP адреса сервера в /etc/hosts
-  ansible.builtin.lineinfile:
-    path: /etc/hosts
-    line: "{{ ansible_default_ipv4.address }}  {{ ansible_fqdn }} {{ ansible_hostname }}"
-
 - name: Обновление URL репозиториев
   when: repo_url is defined
   ansible.builtin.include_tasks: "repo_update.yml"
@@ -58,9 +53,12 @@
   when: chrony_servers is defined
   ansible.builtin.include_tasks: chrony.yml
 
-- name: Настройка firewalld
-  when: ports is defined
-  ansible.builtin.include_tasks: "firewalld.yml"
+- name: Добавдение IP адреса сервера в /etc/hosts
+  ansible.builtin.lineinfile:
+    path: /etc/hosts
+    regexp: '{{ ansible_default_ipv4.address }}'
+    line: "{{ ansible_default_ipv4.address }}  {{ ansible_fqdn }} {{ ansible_hostname }}"
+    state: present
 
 - name: Переключение selinux в permissive mod
   ansible.posix.selinux:
@@ -71,3 +69,7 @@
 - name: Перезагрузка сервера при необходимости
   ansible.builtin.reboot:
   when: result.reboot_required
+
+- name: Настройка firewalld
+  when: ports is defined
+  ansible.builtin.include_tasks: "firewalld.yml"

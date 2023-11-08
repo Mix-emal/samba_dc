@@ -1,0 +1,19 @@
+---
+- name: Предварительная подготовка серверов
+  become: true
+  hosts: dc
+  roles:
+    - role: base_setup
+    - role: preconfig
+      tags: preconfig
+
+- name: Резервный DC
+  become: true
+  hosts: replica_dc
+  roles:
+    - role: bind
+      tags: install_dc, bind
+    - role: dc
+      tags:
+        - install_dc
+        - "[never, reinstall_dc]"

@@ -3,17 +3,6 @@ ansible_user: admin
 ansible_ssh_pass: '!QAZxsw2'
 ansible_become_pass: '!QAZxsw2'
 
-# ## Список пакетов, если необходимо установить на все серверы
-# base_packets:
-#   - bash-completion
-
-# ## Список служб, которые необходимо установить на все серверы и запустить
-# services:
-#   - pkg_name: firewalld
-#     service_name: firewalld
-#   - pkg_name: qemu-guest-agent
-#     service_name: qemu-guest-agent
-
 ## Изменения адреса в репозитории для всех серверов
 repo_url: "https://repo1.red-soft.ru/redos/7.3/"
 
@@ -24,13 +13,14 @@ dns_external:
 
 ## Адрес внутреннего DNS (адреса контроллеров)
 dns_internal:
-  - 192.168.100.151
-  - 192.168.100.152
+  - 192.168.100.16
+  - 192.168.100.17
 
 
 ## Основные параметры домена
-realm: adb.gazprom.ru
-administrator_domain_password: '!QAZxsw2'
+realm: astrakhan-dobycha.gazprom.ru
+domain_admin: 'Администратор'
+administrator_domain_password: 'P@ssw0rd'
 
 trust_realm: win.nornik.ru
 

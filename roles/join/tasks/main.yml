@@ -1,8 +1,7 @@
 ---
 - name: Установка скрипта для ввода в домен
   ansible.builtin.dnf:
-    name:
-      - join-to-domain.sh
+    name: "join-to-domain"
     update_cache: true
     state: present
 
@@ -22,10 +21,33 @@
 - name: Ввод сервера в домен
   when: domain_joined.failed
   ansible.builtin.command: >
-    
-    
-    realm join
-    --membership-software=samba
-    --client-software=winbind {{ realm | upper }}
+    join-to-domain.sh
+    -d {{ realm }}
+    -n {{ inventory_hostname }}
+    -u {{ domain_admin }}
+    -p {{ administrator_domain_password | quote }} -y
   register: dc_result
   changed_when: dc_result.rc != 0
+
+- name: Перезагрузка сервера после ввода в домен
+  when: domain_joined.failed
+  ansible.builtin.reboot:
+
+- name: Блок конфигурации chrony при необходимости
+  when: update_chrony_conf | default('false')
+  block:
+    - name: Добавдение pool ntp
+      ansible.builtin.lineinfile:
+        path: /etc/chrony.conf
+        regexp: "server"
+        line: "pool astrakhan-dobycha.gazprom.ru iburst"
+        state: present
+    - name: Добавдение maxdistance 16.0
+      ansible.builtin.lineinfile:
+        path: /etc/chrony.conf
+        line: "maxdistance 16.0"
+        state: present
+    - name: Перезапуск chrony
+      ansible.builtin.service:
+        name: chronyd
+        state: restarted

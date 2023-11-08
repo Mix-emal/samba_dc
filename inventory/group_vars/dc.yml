@@ -9,7 +9,8 @@ base_packets:
   - krb5*
   - bind
   - rsync
-  - unison
+  - unison240-gtk
+  - python2-libselinux
 
 ## Список служб, которые необходимо установить на DC и запустить
 services:

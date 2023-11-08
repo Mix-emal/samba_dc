@@ -15,9 +15,7 @@
 - name: Ввод сервера в домен
   when: domain_joined.failed
   ansible.builtin.command: >
-    realm join
-    --membership-software=samba
-    --client-software=winbind {{ realm | upper }}
+    realm join --membership-software=samba --client-software=winbind {{ realm }} -U {{ domain_admin }} <<< {{ administrator_domain_password | quote }}
   register: dc_result
   changed_when: dc_result.rc != 0
 

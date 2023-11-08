@@ -65,19 +65,12 @@
       when: inventory_hostname in groups["replica_dc"]
       ansible.builtin.include_tasks: "replica_dc.yml"
 
-    - name: Резервная копия /etc/krb5.conf
-      ansible.builtin.copy:
-        src: /etc/krb5.conf
-        dest: /etc/krb5.conf.bak
-        mode: '0644'
-        remote_src: true
-
     - name: Подготовка конфигурации Kerberos и Samba
       ansible.builtin.template:
         src: "{{ item.templete_name }}"
         dest: "{{ item.file_path }}"
         owner: root
-        group: "{{ file_group }}"
+        group: "{{ item.file_group }}"
         mode: "0644"
         backup: true
       loop:

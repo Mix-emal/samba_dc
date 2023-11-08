@@ -6,6 +6,7 @@ base_setup_rename_server: true
 ## Список пакетов, которые необходимо установить на DHCP
 base_packets:
   - bash-completion
+  - python2-libselinux
 
 ## Список служб, которые необходимо установить на DHCP
 services:

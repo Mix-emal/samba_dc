@@ -4,7 +4,9 @@
     samba-tool domain join {{ ansible_domain | upper }} DC
     --dns-backend=BIND9_DLZ
     --realm={{ ansible_domain | upper }}
-    --username Administrator
+    {{ '--site=' + site_name if site_name is defined else '' }}
+    --backend-store=mdb
+    --username {{ domain_admin }}
     --password {{ administrator_domain_password | quote }}
   register: dc_result
   changed_when: dc_result.rc != 0

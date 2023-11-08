@@ -17,6 +17,7 @@ base_packets:
   - sssd-winbind-idmap
   - krb5-workstation*.x86_64
   - adcli
+  - python2-libselinux
 
 ## Список служб, которые необходимо установить на файловый сервер
 services:
