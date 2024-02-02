@@ -59,15 +59,13 @@ logging {
         };
 };
 
-{% if bind_zones is defined %}
-{% for bind_zone in bind_zones %}
-{% if bind_zone.type is defined and bind_zone.type == 'forward' %}
+{% if trust_realm is defined %}
+{% for bind_zone in trust_realm %}
 zone "{{ bind_zone.name }}" IN {
    type forward;
    forward only;
-   forwarders { {{ bind_zone.forwarders|join('; ') }}; };
+   forwarders { {{ bind_zone.dns|join('; ') }}; };
 };
-{% endif %}
 {% endfor %}
 {% endif %}
 

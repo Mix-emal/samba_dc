@@ -5,13 +5,18 @@
   become: true
 
   tasks:
-    - name: Set site
-      ansible.builtin.set_fact:
-        dbs: "{{ '--site=' + site_name if site_name is defined else '' }}"
+    # - name: Set site
+    #   ansible.builtin.set_fact:
+    #     dbs: "{{ '--site=' + site_name if site_name is defined else '' }}"
 
 
     - name: Replica_dc
       ansible.builtin.debug:
-        var: dbs
+        var: item.forwarders
+      loop: "{{ bind_zones }}"
       # loop: "{{ groups['dc'] }}"
       # when: inventory_hostname in groups["replica_dc"]
+# bind_zones:
+#   - name: "{{ trust_realm }}"
+#     type: forward
+#     forwarders:

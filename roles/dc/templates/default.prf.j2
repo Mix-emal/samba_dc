@@ -1,6 +1,6 @@
 root = /var/lib/samba
 # Note that 2 x / behind DC2, it is required
-root = ssh://root@DC2.skynet.murom//var/lib/samba 
+# root = ssh://root@DC2.skynet.murom//var/lib/samba 
 {% for host in groups['replica_dc'] %}
 root = ssh://root@{{ hostvars[host].inventory_hostname }}.{{ realm }}//var/lib/samba 
 {% endfor %}

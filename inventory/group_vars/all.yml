@@ -1,7 +1,7 @@
 ---
 ansible_user: admin
-ansible_ssh_pass: '!QAZxsw2'
-ansible_become_pass: '!QAZxsw2'
+ansible_ssh_pass: 'P@ssw0rd'
+ansible_become_pass: 'P@ssw0rd'
 
 ## Изменения адреса в репозитории для всех серверов
 repo_url: "https://repo1.red-soft.ru/redos/7.3/"
@@ -9,20 +9,21 @@ repo_url: "https://repo1.red-soft.ru/redos/7.3/"
 ## Адрес внешнего DNS
 dns_external:
   - 192.168.100.1
-  - 192.168.100.2
 
 ## Адрес внутреннего DNS (адреса контроллеров)
 dns_internal:
-  - 192.168.100.16
-  - 192.168.100.17
-
+  - 192.168.100.50
 
 ## Основные параметры домена
-realm: astrakhan-dobycha.gazprom.ru
-domain_admin: 'Администратор'
+realm: esk.lab
+domain_admin: 'Administrator'
 administrator_domain_password: 'P@ssw0rd'
 
-trust_realm: win.nornik.ru
+## Параметры траста
+trust_realm:
+  - name: gazprom.ru
+    dns:
+      - 192.168.100.12
 
 ## Адреса внешних NTP адресов
 chrony_servers:

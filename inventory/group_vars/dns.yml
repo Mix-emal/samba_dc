@@ -1,8 +1,8 @@
 ---
 # Добавиление зон (type - forward)
-bind_zones:
-  - name: "{{ trust_realm }}"
-    type: forward
-    forwarders:
-      - 192.168.100.17
-      - 192.168.100.18
+# bind_zones:
+#   - name: "{{ trust_realm }}"
+#     type: forward
+#     forwarders: "{{ dns_trust }}"
+#       # - 192.168.100.17
+#       # - 192.168.100.18
