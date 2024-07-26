@@ -6,18 +6,19 @@ base_setup_rename_server: true
 ## Список пакетов, которые необходимо установить на файловый сервер
 base_packets:
   - bash-completion
-  - samba*.x86_64
-  - join-to-domain
-  - realmd
-  - oddjob-mkhomedir
-  - oddjob
-  - samba-winbind-clients
   - samba-winbind
-  - samba-common-tools
-  - sssd-winbind-idmap
-  - krb5-workstation*.x86_64
+  - samba-winbind-clients
+  - samba
+  - pam_krb5
+  - krb5-workstation
+  - chrony
+  - samba-winbind-krb5-locator
+  - quota
   - adcli
   - python2-libselinux
+  - join-to-domain
+  - adcli
+
 
 ## Список служб, которые необходимо установить на файловый сервер
 services:
@@ -32,18 +33,18 @@ ports:
 ## Каталог для общего доступа. Также описание разрашений для ACL
 share:
   dir: /exports/pub
-  permissions: '2770'
+  permissions: '2777'
   owner: root
-  main_group: "{{ realm.split('.', 1)[0] | upper }}\\Domain Users"
-  setfacl_group:
-    - name: "{{ realm.split('.', 1)[0] | upper }}\\Domain Admins"
-      permissions: rwx
+  main_group: "{{ realm.split('.', 1)[0] | upper }}\\Domain Admins"
+  # setfacl_group:
+  #   - name: "{{ realm.split('.', 1)[0] | upper }}\\Domain Admins"
+  #     permissions: rwx
     # - name: "{{ realm.split('.', 1)[0] | upper }}\\ServerAdmins"
     #   permissions: rwx
 
 ## Параметры каталога общего достпа (группы, кому доступен каталог и административные группы)
 valid_users:
   - "@{{ realm.split('.', 1)[0] | upper }}\\Domain Users"
-admin_users:
-  - "@{{ realm.split('.', 1)[0] | upper }}\\Domain Admins"
-  - "@{{ trust_realm.split('.', 1)[0] | upper }}\\Domain Admins"
+# admin_users:
+#   - "@{{ realm.split('.', 1)[0] | upper }}\\Domain Admins"
+#   - "@{{ trust_realm.split('.', 1)[0] | upper }}\\Domain Admins"

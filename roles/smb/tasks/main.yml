@@ -15,7 +15,7 @@
 - name: Ввод сервера в домен
   when: domain_joined.failed
   ansible.builtin.command: >
-    realm join --membership-software=samba --client-software=winbind {{ realm }} -U {{ domain_admin }} <<< {{ administrator_domain_password | quote }}
+    /usr/bin/join-to-domain.sh -d {{ realm }} -n {{ inventory_hostname }} -u {{ domain_admin }} -p {{ administrator_domain_password | quote }} -w -y
   register: dc_result
   changed_when: dc_result.rc != 0
 
@@ -47,17 +47,17 @@
     mode: "{{ item.file_permissions }}"
     backup: true
   loop:
-    - { templete_name: 'sssd.conf.j2', file_path: '/etc/sssd/sssd.conf', file_permissions: '0600'}
+    # - { templete_name: 'sssd.conf.j2', file_path: '/etc/sssd/sssd.conf', file_permissions: '0600'}
     - { templete_name: 'smb.conf.j2', file_path: '/etc/samba/smb.conf', file_permissions: '0644' }
   vars:
     dc: "{{ groups['dc'] }}"
 
-- name: Запуск сервисов Samba и named
+- name: Запуск сервисов Samba
   ansible.builtin.service:
     name: "{{ item }}"
     state: restarted
     enabled: true
   loop:
-    - sssd
+    # - sssd
     - winbind
     - smb

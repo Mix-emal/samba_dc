@@ -1,28 +1,36 @@
 [global]
-    workgroup = ASTRAKHAN-DB
-    realm = {{ realm | upper }}
+    workgroup = {{ realm.split('.', 1)[0] | upper }}
+    realm = 
     security = ADS
     passdb backend = tdbsam
     winbind refresh tickets = Yes
 
+    security = ads
+    realm = {{ realm | upper }}
+    workgroup = {{ realm.split('.', 1)[0] | upper }}
+    template shell = /bin/bash
+    kerberos method = system keytab
+    wins support = no
+    winbind use default domain = yes
+    winbind enum users = no
+    winbind enum groups = no
+    template homedir = /home/{{ realm | upper }} /%U
+    winbind refresh tickets = no
+    winbind offline logon = no
+    machine password timeout = 0
+
+    idmap config * : range = 10000-99999
     idmap config * : backend = tdb
-    idmap config * : range = 210000-999999
-    idmap config ADB : backend = sss
-    idmap config ADB : range = 2000000-4000000000
+    idmap config {{ realm.split('.', 1)[0] | upper }} : range = 1000000-1999999
+    idmap config {{ realm.split('.', 1)[0] | upper }} : backend = rid
 
-    client min protocol = SMB2
-    client max protocol = SMB3
+    client min protocol = SMB3
+    load printers = no
+    printcap name = /dev/null
 
-    dedicated keytab file = /etc/krb5.keytab
-    kerberos method = secrets and keytab
-
-    machine password timeout = 60
     vfs objects = acl_xattr
     map acl inherit = yes
     store dos attributes = yes
-
-    printcap name = /dev/null
-    load printers = no
 
 [share]
  path = {{ share.dir }}
@@ -34,5 +42,4 @@
 {% if admin_users is defined %}
  admin users = {{ admin_users | join(',') }}
 {% endif %}
- directory mask = 0700
- create mask = 0600
+ acl_xattr:ignore system acls = yes
